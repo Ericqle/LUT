@@ -1,0 +1,69 @@
+<Button>:
+    canvas.before:
+        Color:
+            rgba: .5, .5, .5, 1
+        Line:
+            width: 1
+            rectangle: self.x, self.y, self.width, self.height
+
+    background_normal: 'white.png'
+    background_color: 180/255, 180/255, 180/255, 1
+
+<Label>:
+    color: 0, 0, 0, 1
+
+<Popup>:
+    title_color: 0, 0, 0, 1
+    background: 'white.png'
+
+<Screen>:
+    canvas.before:
+        Color:
+            rgb: 1, 1, 1, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+<TabbedPanel>:
+    tab_width: None
+
+<TabbedPanelItem>:
+    width: self.texture_size[0]
+    padding: 10, 0
+    size_hint_x: None
+
+<TabbedPanelHeader>:
+    halign: 'center'
+    valign: 'middle'
+    background_normal: 'white.png'
+    background_color: 240/255, 240/255, 240/255, 1
+    background_down: 'atlas://data/images/defaulttheme/button_pressed'
+    border: (8, 8, 8, 8)
+    font_size: '13sp'
+
+<FileChooserListView>:
+    canvas.before:
+        Color:
+            rgb: 1, 1, 1, 1
+        Rectangle:
+            size: self.size
+
+<TextInput>
+    background_normal: 'white.png'
+    canvas.after:
+        Color:
+            rgba: .5, .5, .5, 1
+        Line:
+            width: 1
+            rectangle: self.x, self.y, self.width, self.height
+
+<ActionSeparator>:
+    size_hint_x: None
+    minimum_width: '1.5sp'
+    width: self.minimum_width
+    canvas:
+        Color:
+            rgba: 1,1,1,1
+        Rectangle:
+            pos: self.x, self.y + sp(4)
+            size: self.width, self.height - sp(8)
