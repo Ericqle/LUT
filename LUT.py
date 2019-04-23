@@ -15,10 +15,9 @@ class Lut(Screen):
 
     def activate(self):
         try:
-            port_address = "60"
             self.i2c_device = I2cController()
             self.i2c_device.configure('ftdi://ftdi:232h/1')
-            self.slave_device = self.i2c_device.get_port(int(port_address, 16))
+            self.slave_device = self.i2c_device.get_port(int("60", 16))
             self.slave_device.configure_register(bigendian=True, width=2)
         except USBError:
             usb_error = Factory.ErrorPopup()
@@ -166,4 +165,3 @@ class Lut(Screen):
                 no_lut_error = Factory.ErrorPopup()
                 no_lut_error.text = "Error: LUT not calculated"
                 no_lut_error.open()
-        self.deactivate()

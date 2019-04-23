@@ -46,12 +46,13 @@ class Run(threading.Thread):
             except I2cNackError:
                 self.script_log_label.text = str(I2cNackError)
             except I2cIOError:
-                self.script_log_label.text = str(I2cNackError)
+                self.script_log_label.text = str(I2cIOError)
             except I2cTimeoutError:
-                self.script_log_label.text = str(I2cNackError)
+                self.script_log_label.text = str(I2cTimeoutError)
             self.script_progress_bar.value += progress_segment
 
             self.script_preview_text_input.text += self.script_log_label.text + '\n'
 
         self.script_log_label.text = "End Write"
         self.script_progress_bar.value = 0
+
