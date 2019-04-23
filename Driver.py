@@ -16,7 +16,7 @@ class LUTApp(App):
 
 
 if __name__ == '__main__':
-    Window.size = (750, 360)
+    Window.size = (750, 400)
     Config.set('input', 'mouse', 'mouse,multitouch_on_demand')
     Config.set('graphics', 'default_font', 'RobotoMono-Regular.ttf')
     LUTApp().run()
