@@ -32,10 +32,6 @@ class Lut(Screen):
             i2c_io_error.text = str(I2cIOError)
             i2c_io_error.open()
 
-    def deactivate(self):
-        self.i2c_device.terminate()
-        self.slave_device = None
-
     @staticmethod
     def validate_address(text):
         valid = re.compile(r"^[a-fA-F0-9]{2,4}$")
@@ -155,7 +151,7 @@ class Lut(Screen):
 
                     lut_script = LUTScript(commands)
                     lut_script.execute(self.slave_device, self.lut_script_log_label, self.lut_script_progress_bar,
-                                       self.lut_text)
+                                       self.lut_text, self.i2c_device)
 
                 else:
                     blank_addr_error = Factory.ErrorPopup()
