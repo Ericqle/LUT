@@ -12,8 +12,12 @@ class Lut(Screen):
     script_values = list()
     slave_device = None
     i2c_device = None
+    os = None
 
-    def activate(self):
+    def set_os(self, os):
+        self.os = os
+
+    def activate_osx(self):
         try:
             self.i2c_device = I2cController()
             self.i2c_device.configure('ftdi://ftdi:232h/1')
@@ -31,6 +35,11 @@ class Lut(Screen):
             i2c_io_error = Factory.ErrorPopup()
             i2c_io_error.text = str(I2cIOError)
             i2c_io_error.open()
+
+    def activate_win(self):
+        import ctypes
+        dll = ctypes.windll.LoadLibrary('/Users/eric/Desktop/i2c_dll.dll')
+        dll.i2c_init()
 
     @staticmethod
     def validate_address(text):
@@ -134,30 +143,33 @@ class Lut(Screen):
             input_error_popup.open()
 
     def write(self, start_address, values):
-        self.activate()
-        if self.slave_device is not None:
-            if len(values) != 0:
-                if self.validate_address(start_address):
-                    commands = list()
-                    address = start_address
+        if len(values) != 0:
+            if self.validate_address(start_address):
+                commands = list()
+                address = start_address
 
-                    for i in range(len(values)):
-                        address = int(address, 16)
-                        address = "{0:#0{1}x}".format(address, 6)
-                        command_sequence = ['write', address, '[7:0]', values[i]]
-                        commands.append(command_sequence)
-                        address = int(address, 16) + 1
-                        address = "{0:#0{1}x}".format(address, 6)
+                for i in range(len(values)):
+                    address = int(address, 16)
+                    address = "{0:#0{1}x}".format(address, 6)
+                    command_sequence = ['write', address, '[7:0]', values[i]]
+                    commands.append(command_sequence)
+                    address = int(address, 16) + 1
+                    address = "{0:#0{1}x}".format(address, 6)
 
-                    lut_script = LUTScript(commands)
-                    lut_script.execute(self.slave_device, self.lut_script_log_label, self.lut_script_progress_bar,
-                                       self.lut_text, self.i2c_device)
+                if self.os == 'osx':
+                    self.activate_osx()
+                    if self.slave_device is not None:
+                        lut_script = LUTScript(commands)
+                        lut_script.execute(self.slave_device, self.lut_script_log_label, self.lut_script_progress_bar,
+                                           self.lut_text, self.i2c_device)
+                if self.os == 'win32':
+                    print("Win Write")
 
-                else:
-                    blank_addr_error = Factory.ErrorPopup()
-                    blank_addr_error.text = "Error: no address added or invalid address"
-                    blank_addr_error.open()
             else:
-                no_lut_error = Factory.ErrorPopup()
-                no_lut_error.text = "Error: LUT not calculated"
-                no_lut_error.open()
+                blank_addr_error = Factory.ErrorPopup()
+                blank_addr_error.text = "Error: no address added or invalid address"
+                blank_addr_error.open()
+        else:
+            no_lut_error = Factory.ErrorPopup()
+            no_lut_error.text = "Error: LUT not calculated"
+            no_lut_error.open()
