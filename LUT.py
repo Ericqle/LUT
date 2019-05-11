@@ -1,6 +1,6 @@
 from kivy.uix.screenmanager import Screen
 from kivy.factory import Factory
-from LUT_Script import LUTScript
+from LUT_Script import LUTScriptOSX, LUTScriptWIN32
 from pyftdi.i2c import I2cController, I2cIOError
 from usb.core import USBError
 from pyftdi.usbtools import UsbToolsError
@@ -12,6 +12,7 @@ class Lut(Screen):
     script_values = list()
     slave_device = None
     i2c_device = None
+    dll = None
     os = None
 
     def set_os(self, os):
@@ -38,8 +39,9 @@ class Lut(Screen):
 
     def activate_win(self):
         import ctypes
-        dll = ctypes.windll.LoadLibrary('/Users/eric/Desktop/i2c_dll.dll')
-        dll.i2c_init()
+        self.dll = ctypes.windll.LoadLibrary('/Users/eric/Desktop/i2c_dll.dll')
+        self.dll.i2c_init()
+        self.i2c_device = 0x60
 
     @staticmethod
     def validate_address(text):
@@ -159,11 +161,14 @@ class Lut(Screen):
                 if self.os == 'osx':
                     self.activate_osx()
                     if self.slave_device is not None:
-                        lut_script = LUTScript(commands)
+                        lut_script = LUTScriptOSX(commands)
                         lut_script.execute(self.slave_device, self.lut_script_log_label, self.lut_script_progress_bar,
                                            self.lut_text, self.i2c_device)
                 if self.os == 'win32':
-                    print("Win Write")
+                    self.activate_win()
+                    lut_script = LUTScriptWIN32(commands)
+                    lut_script.execute(self.slave_device, self.lut_script_log_label, self.lut_script_progress_bar,
+                                       self.lut_text, self.dll)
 
             else:
                 blank_addr_error = Factory.ErrorPopup()
