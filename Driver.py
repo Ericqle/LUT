@@ -14,7 +14,7 @@ class LUTApp(App):
     if sys.platform == 'darwin':
         os = 'osx'
     elif sys.platform == 'win32' or sys.platform == 'win64':
-        os = 'windows'
+        os = 'win32'
 
     def build(self):
         screen_manager = ScreenManager()
