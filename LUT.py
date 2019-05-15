@@ -4,6 +4,7 @@ from LUT_Script import LUTScriptOSX, LUTScriptWIN32
 from pyftdi.i2c import I2cController, I2cIOError
 from usb.core import USBError
 from pyftdi.usbtools import UsbToolsError
+import math
 import re
 
 
@@ -52,7 +53,8 @@ class Lut(Screen):
             return True
 
     @staticmethod
-    def calc_lut(addresses, bin_weight_eye_adj_param1, bin_weight_eye_adj_param2, a_pre, b_main, c_post, scale_factor):
+    def calc_lut(addresses, bin_weight_eye_adj_param1, bin_weight_eye_adj_param2, a_pre, b_main, c_post, scale_factor,
+                 round_checkbox):
 
         y_values = list()
         minimized_values = list()
@@ -98,8 +100,18 @@ class Lut(Screen):
         for normalized_value in normalized_values:
             final_lut_ints.append(((normalized_value - 31.5) * scale_factor) + 31.5)
 
-        for final_lut_int in final_lut_ints:
-            final_lut_bins.append(format(int(final_lut_int), '06b'))
+        if not round_checkbox.active:
+            for final_lut_int in final_lut_ints:
+                final_lut_bins.append(format(int(final_lut_int), '06b'))
+
+        elif round_checkbox.active:
+            i = 0
+            for final_lut_int in final_lut_ints:
+                if i <= 31:
+                    final_lut_bins.append(format(math.ceil(final_lut_int), '06b'))
+                    i += 1
+                else:
+                    final_lut_bins.append(format(int(final_lut_int), '06b'))
 
         return final_lut_bins
 
@@ -111,10 +123,11 @@ class Lut(Screen):
             b_main = float(self.b.text)
             c_post = float(self.c.text)
             scale_factor = float(self.scale.text)
+            round_checkbox = self.round_checkbox
 
             # get lut valuse
             lut = self.calc_lut(self.addresses, bin_weight_eye_adj_param1, bin_weight_eye_adj_param2, a_pre, b_main,
-                                c_post, scale_factor)
+                                c_post, scale_factor, round_checkbox)
 
             # transpose to get 64 bit values
             lut_transposed = [''.join(s) for s in zip(*lut)]

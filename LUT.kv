@@ -9,6 +9,7 @@
     lut_text: lut_text
     lut_script_progress_bar: lut_script_progress_bar
     lut_script_log_label: lut_script_log_label
+    round_checkbox: round_checkbox
 
     BoxLayout:
         canvas.before:
@@ -143,6 +144,14 @@
                 text: "Write"
                 on_press:
                     root.write(start_address.text, root.script_values)
+
+            Label:
+                size_hint: .3, 1
+                text: "Round:"
+            CheckBox:
+                size_hint: .25, 1
+                active: False
+                id: round_checkbox
 
             Label:
                 size_hint: .75, 1
