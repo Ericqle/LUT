@@ -67,8 +67,11 @@ class Lut(Screen):
         for address in addresses:
             bin_string = format(address, '06b')
 
-            a = ((bin_weight_eye_adj_param2 * int(bin_string[0])) + (
+            if address < 48:
+                a = ((bin_weight_eye_adj_param2 * int(bin_string[0])) + (
                         bin_weight_eye_adj_param1 * int(bin_string[1]))) * a_pre
+            else:
+                a = ((2 * int(bin_string[0])) + int(bin_string[1])) * a_pre
 
             if ((address == 12 or address == 28 or address == 44 or address == 60) or b_fix is True) and address != 0:
                 b_fix = True
@@ -102,16 +105,24 @@ class Lut(Screen):
 
         if not round_checkbox.active:
             for final_lut_int in final_lut_ints:
-                final_lut_bins.append(format(int(final_lut_int), '06b'))
+                # final_lut_bins.append(format(int(final_lut_int), '06b'))
+                final_lut_bins.append(format(round(int(final_lut_int)), '06b'))
 
         elif round_checkbox.active:
             i = 0
             for final_lut_int in final_lut_ints:
+                '''
                 if i <= 31:
                     final_lut_bins.append(format(math.ceil(final_lut_int), '06b'))
                     i += 1
                 else:
                     final_lut_bins.append(format(int(final_lut_int), '06b'))
+                '''
+                if i <= 31:
+                    final_lut_bins.append(format(int(final_lut_int), '06b'))
+                    i += 1
+                else:
+                    final_lut_bins.append(format(math.ceil(final_lut_int), '06b'))
 
         return final_lut_bins
 
